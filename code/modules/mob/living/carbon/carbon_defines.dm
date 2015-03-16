@@ -11,6 +11,7 @@
 	// total amount of wounds on mob, used to spread out healing and the like over all wounds
 	var/obj/item/handcuffed = null //Whether or not the mob is handcuffed
 	var/obj/item/legcuffed = null  //Same as handcuffs but for legs. Bear traps use this.
+	var/obj/item/device/iv_kit/iv_line = null // IV line the mob is currently hooked up to
 	//Surgery info
 	var/datum/surgery_status/op_stage = new/datum/surgery_status
 	//Active emote/pose

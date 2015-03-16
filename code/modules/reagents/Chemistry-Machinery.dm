@@ -198,6 +198,16 @@
 			else
 				var/obj/item/weapon/reagent_containers/food/condiment/P = new/obj/item/weapon/reagent_containers/food/condiment(src.loc)
 				reagents.trans_to_obj(P,50)
+		else if (href_list["createbag"])
+			var/obj/item/weapon/reagent_containers/iv_bag/bag = new/obj/item/weapon/reagent_containers/iv_bag(src.loc)
+			var/new_name = reject_bad_text(input(usr,"Name:","Name the IV bag", reagents.get_master_reagent_name()))
+			if(!new_name)
+				new_name = reagents.get_master_reagent_name()
+			bag.name = "[new_name] bag"
+			
+			reagents.trans_to_obj(bag,60)
+			bag.update_icon()
+			
 		else if(href_list["change_pill"])
 			#define MAX_PILL_SPRITE 20 //max icon state of the pill sprites
 			var/dat = "<table>"
@@ -278,7 +288,8 @@
 		if(!condi)
 			dat += "<HR><BR><A href='?src=\ref[src];createpill=1'>Create pill (60 units max)</A><a href=\"?src=\ref[src]&change_pill=1\"><img src=\"pill[pillsprite].png\" /></a><BR>"
 			dat += "<A href='?src=\ref[src];createpill_multiple=1'>Create multiple pills</A><BR>"
-			dat += "<A href='?src=\ref[src];createbottle=1'>Create bottle (60 units max)<a href=\"?src=\ref[src]&change_bottle=1\"><img src=\"[bottlesprite].png\" /></A>"
+			dat += "<A href='?src=\ref[src];createbottle=1'>Create bottle (60 units max)<a href=\"?src=\ref[src]&change_bottle=1\"><img src=\"[bottlesprite].png\" /></A><BR>"
+			dat += "<A href='?src=\ref[src];createbag=1'>Create IV bag (60 units max)</a>"
 		else
 			dat += "<A href='?src=\ref[src];createbottle=1'>Create bottle (50 units max)</A>"
 	if(!condi)
