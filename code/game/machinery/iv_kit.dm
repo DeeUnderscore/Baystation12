@@ -7,12 +7,14 @@
 	desc = "A kit for starting an IV line."
 	w_class = 2
 		
-	var/drip_amount = REAGENTS_METABOLISM  // How much to transfer with each drip by default
-	var/max_drip_amount = REAGENTS_METABOLISM * 5  // Maximum possible drip amount a user can set. Minimum is 0.
+	var/drip_amount = REAGENTS_METABOLISM * 2 // How much to transfer with each drip by default
+	var/max_drip_amount = REAGENTS_METABOLISM * 8  // Maximum possible drip amount a user can set. Minimum is 0.
 	var/obj/item/weapon/reagent_containers/iv_bag/bag = null  // The bag we're using, null if none attached
 	var/list/valid_holders = list(/obj/machinery/iv_stand)  // List of places other than hands where the kit can be put and still work
 	var/mob/living/carbon/human/patient = null  // Person currently hooked up
-
+	var/skipped_ticks = 0
+	
+	
 /obj/item/device/iv_kit/examine(mob/user)
 	..()
 	
@@ -138,6 +140,16 @@
 	
 	if(src.drip_amount == 0)
 		return
+		
+	// We skip every other tick to prevent homeopathy. If we dripped every tick, we'd 
+	// have the ability to drip a very low amount of reagent every tick and still
+	// get the full effect. With skipped ticks, this is still possible, but at least
+	// we have to drip at least enough reagent to cover one-and-a-fraction ticks
+	if(skipped_ticks < 1)
+		skipped_ticks += 1
+		return 
+	else
+		skipped_ticks = 0
 
 	// administering drugs
 	if(src.bag && src.in_valid_location())
