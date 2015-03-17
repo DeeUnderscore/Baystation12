@@ -125,9 +125,6 @@
 		error("IV_kit ([src.loc.x],[src.loc.y]) in processing_objects when it shouldn't be.")
 		processing_objects.Remove(src)
 		return
-		
-	if(src.drip_amount == 0)
-		return
 	
 	// ripping out
 	if(get_dist(src, src.patient) > 1 && isturf(src.patient.loc))
@@ -137,6 +134,9 @@
 		
 		src.update_icon()
 		processing_objects.Remove(src)
+		return
+	
+	if(src.drip_amount == 0)
 		return
 
 	// administering drugs
