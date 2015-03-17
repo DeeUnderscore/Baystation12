@@ -10,10 +10,13 @@
 	var/drip_amount = REAGENTS_METABOLISM  // How much to transfer with each drip by default
 	var/max_drip_amount = REAGENTS_METABOLISM * 5  // Maximum possible drip amount a user can set. Minimum is 0.
 	var/obj/item/weapon/reagent_containers/iv_bag/bag = null  // The bag we're using, null if none attached
+	var/list/valid_holders = list(/obj/machinery/iv_stand)  // List of places other than hands where the kit can be put and still work
 	var/mob/living/carbon/human/patient = null  // Person currently hooked up
 
 /obj/item/device/iv_kit/examine(mob/user)
 	..()
+	
+	if (!(user in view(2)) && user!=src.loc) return
 	
 	// bag line
 	if(!src.bag)
@@ -42,36 +45,51 @@
 	 
 	if(patient)
 		// detach from patient - anyone can be clicked for removing IVs for the sake of simplicty
-		user.visible_message("\red [patient.name] is disconnected from the IV line.")
-		patient.iv_line = null
-		patient = null
-		processing_objects.Remove(src)
-		update_icon()
+		src.detach_patient()
 		
 	else
-		// attach new patient
-		var/mob/living/carbon/human/new_patient = target
-		
-		// Suit check. Similar to can_inject(), but simpler: we never check for head
-		if(new_patient.wear_suit && new_patient.wear_suit.flags & THICKMATERIAL)
-			user << "\red You cannot find a way to run an IV line through [target.name]'s suit."
-			return
-		
-		// The visible messages don't say where the catheter is inserted. This is on purpose, as the IV kit (like syringes) does not check
-		// for mechanical limbs. We could check for mechanical limbs and then pick a suitable place for the catheter, but that would add a 
-		// bunch of overhead. 
-		user.visible_message("\red [user.name] begins inserting an IV line into [target.name]", "\red You begin inserting the IV line into [target.name]")
-		
-		if(!do_mob(user, target, IV_KIT_HOOKIN_TIME)) return
-		user.visible_message("\red [user.name] inserts an IV line into [target.name]", "\red You finish inserting the IV line into [target.name]")
-		
-		patient = new_patient
-		patient.iv_line = src
-		update_icon()
-		if(is_ready())
-			add_attack_log(user)
-			processing_objects.Add(src)
-		
+		var/mob/living/carbon/human/H = target
+		attach_patient(user, H)
+/**
+ *  Attempt to attach a patient to the IV kit
+ *
+ *  doctor is the mob doing the attaching, new_patient is the mob we're trying to stick the needle in.
+ *  This proc does not check range.
+ */	
+/obj/item/device/iv_kit/proc/attach_patient(mob/doctor, mob/living/carbon/human/new_patient)
+	// Suit check. Similar to can_inject(), but simpler: we never check for head
+	if(new_patient.wear_suit && new_patient.wear_suit.flags & THICKMATERIAL)
+		doctor << "\red You cannot find a way to run an IV line through [new_patient.name]'s suit."
+		return
+	
+	// The visible messages don't say where the catheter is inserted. This is on purpose, as the IV kit (like syringes) does not check
+	// for mechanical limbs. We could check for mechanical limbs and then pick a suitable place for the catheter, but that would add a 
+	// bunch of overhead. 
+	doctor.visible_message("\red [doctor.name] begins inserting an IV line into [new_patient.name].", "\red You begin inserting the IV line into [new_patient.name].")
+	
+	if(!do_mob(doctor, new_patient, IV_KIT_HOOKIN_TIME)) return
+	doctor.visible_message("\red [doctor.name] inserts an IV line into [new_patient.name].", "\red You finish inserting the IV line into [new_patient.name].")
+	
+	patient = new_patient
+	patient.iv_line = src
+	update_icon()
+	
+	processing_objects.Add(src)
+	if(is_ready())
+		add_attack_log(doctor)
+
+/**
+ *  Detach current patient from the IV
+ *
+ *  This proc does not check range.
+ */
+/obj/item/device/iv_kit/proc/detach_patient()
+	patient.visible_message("\red [patient.name] is disconnected from the IV line.")
+	patient.iv_line = null
+	patient = null
+	processing_objects.Remove(src)
+	update_icon()
+	
 	
 /obj/item/device/iv_kit/attackby(obj/item/weapon/W, mob/user)
 	// Hook up new bag
@@ -84,7 +102,7 @@
 		update_icon()
 		if(is_ready())
 			add_attack_log(user)
-			processing_objects.Add(src)
+			
 	else
 		return ..()
 
@@ -96,8 +114,6 @@
 		src.bag = null 
 		
 		update_icon()
-		if(src.patient)
-			processing_objects.Remove(src)
 		return
 	
 	return ..()
@@ -105,7 +121,7 @@
 /obj/item/device/iv_kit/process()
 	set background = 1  // might need changing if dripping too unpredictable in practice
 	
-	if(!src.patient || !src.bag)
+	if(!src.patient)
 		error("IV_kit ([src.loc.x],[src.loc.y]) in processing_objects when it shouldn't be.")
 		processing_objects.Remove(src)
 		return
@@ -124,7 +140,7 @@
 		return
 
 	// administering drugs
-	if(src.in_valid_location())
+	if(src.bag && src.in_valid_location())
 		src.bag.reagents.trans_to(src.patient, src.drip_amount)
 	update_icon()
 	
@@ -153,8 +169,8 @@
 	
 	if(isturf(this_loc))
 		return 0
-	// TODO: add checks for locs other than hands (like IV poles, synth equipment, etc.)
-	else if(ismob(this_loc) && this_loc != src.patient)
+		
+	if((ismob(this_loc) && this_loc != src.patient) || (this_loc.type in src.valid_holders))
 		return 1
 	
 	// We check recursively, so IV kits in backpacks and such should still work. 
