@@ -17,7 +17,38 @@
 	else
 		user << "It is empty."
 		
+/obj/item/weapon/reagent_containers/iv_bag/update_icon()
+	overlays.Cut()
 
+	if(reagents.total_volume)
+		var/image/filling = image('icons/obj/bloodpack.dmi', src, "over-1")
+
+		var/percent = round((reagents.total_volume / volume) * 100)
+		switch(percent)
+			if(0 to 19) filling.icon_state = "over-1"
+			if(20 to 44) filling.icon_state = "over-2"
+			if(45 to 69) filling.icon_state = "over-3"
+			if(70 to 94) filling.icon_state = "over-4"
+			if(95 to INFINITY) filling.icon_state = "over-full"
+
+		filling.color = mix_color_from_reagents(reagents.reagent_list)
+		overlays += filling
+			
+/obj/item/weapon/reagent_containers/iv_bag/on_reagent_change()
+	update_icon()
+
+/obj/item/weapon/reagent_containers/iv_bag/pickup(mob/user)
+	..()
+	update_icon()
+
+/obj/item/weapon/reagent_containers/iv_bag/dropped(mob/user)
+	..()
+	update_icon()
+
+/obj/item/weapon/reagent_containers/iv_bag/attack_hand()
+	..()
+	update_icon()
+		
 /obj/item/weapon/reagent_containers/iv_bag/blood
 	name = "blood pack"
 	desc = "Contains blood used for transfusion."

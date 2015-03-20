@@ -2,8 +2,8 @@
 
 /obj/item/device/iv_kit
 	name = "\improper IV kit"
-	icon = 'icons/obj/syringe.dmi'
-	icon_state = "0"
+	icon = 'icons/obj/iv_kit.dmi'
+	icon_state = "nobag-unhooked"
 	desc = "A kit for starting an IV line."
 	w_class = 2
 		
@@ -37,6 +37,34 @@
 		user << "\blue No one is attached."
 	else
 		user << "\blue [src.patient.name] is attached."
+		
+/obj/item/device/iv_kit/update_icon()
+	overlays.Cut()
+	icon_state = text("[]-[]", bag ? "bag" : "nobag", patient ? "hooked" : "unhooked")
+	
+	if(bag)
+		// TODO: This is pretty hacky. Figure out a better way to do it.
+		
+		var/matrix/M = matrix()
+		M.Translate(-1, 6)
+		
+		var/image/bag_image = image('icons/obj/bloodpack.dmi', "empty")
+		bag_image.transform = M
+		overlays += bag_image
+		
+		var/image/filling = image('icons/obj/bloodpack.dmi', src, "over-1")
+
+		var/percent = round((src.bag.reagents.total_volume / src.bag.volume) * 100)
+		switch(percent)
+			if(0 to 19) filling.icon_state = "over-1"
+			if(20 to 44) filling.icon_state = "over-2"
+			if(45 to 69) filling.icon_state = "over-3"
+			if(70 to 94) filling.icon_state = "over-4"
+			if(95 to INFINITY) filling.icon_state = "over-full"
+
+		filling.color = mix_color_from_reagents(src.bag.reagents.reagent_list)
+		filling.transform = M
+		overlays += filling
 
 /obj/item/device/iv_kit/attack(mob/target, mob/user, zone)
 	return 

@@ -1,6 +1,7 @@
 /obj/machinery/iv_stand
 	name = "\improper IV stand"
-	icon = 'icons/obj/iv_drip.dmi'
+	icon = 'icons/obj/iv_stand.dmi'
+	icon_state = "empty"
 	desc = "A stand on which an IV kit can be hanged."
 	anchored = 0
 	density = 1
@@ -18,6 +19,27 @@
 		src.hooked_kit = new_hooked_kit
 		
 	update_icon()
+	
+/obj/machinery/iv_stand/update_icon()
+	overlays.Cut()
+
+	if(hooked_kit)
+		icon_state = text("[]-[]", src.hooked_kit.bag ? "bag" : "nobag", src.hooked_kit.patient ? "hooked" : "unhooked")
+		
+		if(src.hooked_kit.bag && src.hooked_kit.bag.reagents.total_volume)
+			var/image/filling = image('icons/obj/iv_stand.dmi', src, "fill-1")
+			
+			var/percent = round((src.hooked_kit.bag.reagents.total_volume / src.hooked_kit.bag.volume) * 100)
+			switch(percent)
+				if(0 to 29) filling.icon_state = "fill-1"
+				if(30 to 59) filling.icon_state = "fill-2"
+				if(60 to 89) filling.icon_state = "fill-3"
+				if(90 to INFINITY) filling.icon_state = "fill-full"
+				
+			filling.color = mix_color_from_reagents(src.hooked_kit.bag.reagents.reagent_list)
+			overlays += filling
+	else
+		icon_state = "empty"
 	
 /obj/machinery/iv_stand/MouseDrop(over_object, src_location, over_location)
 	..()
