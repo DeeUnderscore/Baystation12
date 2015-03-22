@@ -65,6 +65,12 @@
 		filling.color = mix_color_from_reagents(src.bag.reagents.reagent_list)
 		filling.transform = M
 		overlays += filling
+		
+	if(loc.type in valid_holders)
+		// We assume that the holder is an obj and implements update_icon(). The
+		// compiler won't warn us here.
+		var/obj/O = loc
+		O.update_icon()
 
 /obj/item/device/iv_kit/attack(mob/target, mob/user, zone)
 	return 
