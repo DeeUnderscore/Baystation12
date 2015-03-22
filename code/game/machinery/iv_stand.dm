@@ -13,7 +13,6 @@
 	
 	if(!new_hooked_kit)
 		src.hooked_kit = new /obj/item/device/iv_kit()
-		world << "src.hooked_kit == [src.hooked_kit]"
 		src.hooked_kit.loc = src
 	else
 		src.hooked_kit = new_hooked_kit
