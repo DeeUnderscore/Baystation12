@@ -76,6 +76,19 @@
 	return 
 		
 /obj/item/device/iv_kit/afterattack(obj/target, mob/user, proximity)
+	// We allow kit to bag attaching, too. Intuitively, this is spiking the bag
+	// with the IV kit. 
+	if(!src.bag && istype(target, /obj/item/weapon/reagent_containers/iv_bag))
+		user.u_equip(target)
+		
+		user << "\blue You attach \the [src.name] to \the [target.name]."
+		
+		src.bag = target
+		src.bag.loc = src
+		
+		update_icon()
+		return
+		
 	if(!proximity || !istype(target,/mob/living/carbon/human)) 
 		return ..()
 	 
