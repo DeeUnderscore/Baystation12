@@ -199,8 +199,10 @@
 				var/obj/item/weapon/reagent_containers/food/condiment/P = new/obj/item/weapon/reagent_containers/food/condiment(src.loc)
 				reagents.trans_to_obj(P,50)
 		else if (href_list["createbag"])
-			var/obj/item/weapon/reagent_containers/iv_bag/bag = new/obj/item/weapon/reagent_containers/iv_bag(src.loc)
 			var/new_name = reject_bad_text(input(usr,"Name:","Name the IV bag", reagents.get_master_reagent_name()))
+			
+			var/obj/item/weapon/reagent_containers/iv_bag/bag = new/obj/item/weapon/reagent_containers/iv_bag(src.loc)
+			
 			if(!new_name)
 				new_name = reagents.get_master_reagent_name()
 			bag.name = "[new_name] bag"
