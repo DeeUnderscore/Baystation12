@@ -1738,6 +1738,7 @@
 #include "code\modules\reagents\reagent_containers\food\snacks\meat.dm"
 #include "code\modules\reagents\reagent_containers\glass\bottle.dm"
 #include "code\modules\reagents\reagent_containers\glass\bottle\robot.dm"
+#include "code\modules\reagents\reagent_containers\iv\borg_iv.dm"
 #include "code\modules\reagents\reagent_containers\iv\iv_bag.dm"
 #include "code\modules\reagents\reagent_containers\iv\iv_kit.dm"
 #include "code\modules\reagents\reagent_containers\iv\iv_stand.dm"

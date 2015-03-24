@@ -62,6 +62,15 @@
 		return ..()
 		
 /obj/machinery/iv_stand/attackby(obj/item/weapon/W, mob/user)
+	// borg unhooking
+	if(istype(W, /obj/item/weapon/gripper/iv))
+		src.hooked_kit.loc = src.loc
+		src.hooked_kit = null
+		
+		update_icon()
+		return
+		
+	// hooking new kit
 	if (istype(W, /obj/item/device/iv_kit/))
 		if(!isnull(src.hooked_kit))
 			user << "\The [src.hooked_kit.name] is already loaded!"
