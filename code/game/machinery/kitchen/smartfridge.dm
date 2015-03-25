@@ -80,6 +80,8 @@
 		return 1
 	if(istype(O,/obj/item/weapon/reagent_containers/pill/))
 		return 1
+	if(istype(O,/obj/item/weapon/reagent_containers/iv_bag))
+		return 1
 	return 0
 
 /obj/machinery/smartfridge/secure/virology
