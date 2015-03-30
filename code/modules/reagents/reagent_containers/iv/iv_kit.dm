@@ -79,9 +79,14 @@
 	// We allow kit to bag attaching, too. Intuitively, this is spiking the bag
 	// with the IV kit. 
 	if(!src.bag && istype(target, /obj/item/weapon/reagent_containers/iv_bag))
+		var/obj/item/weapon/reagent_containers/iv_bag/B = target
+		if(B.cut)
+			user << "\red \The [B] is cut open. This is not going to work."
+			return
+
 		user.u_equip(target)
 		
-		user << "\blue You attach \the [src.name] to \the [target.name]."
+		user << "\blue You attach \the [src] to \the [target.name]."
 		
 		src.bag = target
 		src.bag.loc = src
@@ -143,8 +148,13 @@
 /obj/item/device/iv_kit/attackby(obj/item/weapon/W, mob/user)
 	// Hook up new bag
 	if(!src.bag && istype(W, /obj/item/weapon/reagent_containers/iv_bag))
+		var/obj/item/weapon/reagent_containers/iv_bag/B = W
+		if(B.cut)
+			user << "\red \The [B] is cut open. This is not going to work."
+			return
+		
 		user.drop_item()
-		src.bag = W
+		src.bag = B
 		src.bag.loc = src
 		
 		user << "\blue You attach \the [src.bag] to \the [src.name]."

@@ -6,8 +6,10 @@
 	desc = "A bag which can be connected to an IV line to administer medication."
 	
 	volume = 60
-	amount_per_transfer_from_this = 10
+	amount_per_transfer_from_this = 30
 	possible_transfer_amounts = null
+	
+	var/cut = 0  // is the bag cut open?
 	
 /obj/item/weapon/reagent_containers/iv_bag/examine(mob/user)
 	..(user)
@@ -16,6 +18,9 @@
 		user << "It contains [src.reagents.total_volume] units of liquid."
 	else
 		user << "It is empty."
+		
+	if(cut)
+		user << "It has been cut open!"
 		
 /obj/item/weapon/reagent_containers/iv_bag/update_icon()
 	overlays.Cut()
@@ -33,7 +38,35 @@
 
 		filling.color = mix_color_from_reagents(reagents.reagent_list)
 		overlays += filling
+		
+/obj/item/weapon/reagent_containers/iv_bag/attackby(obj/item/weapon/W, mob/user)
+	// cut the bag
+	if(istype(W, /obj/item/weapon/wirecutters))
+		src.cut = 1
+		user << "You cut the IV bag open. You could probably pour it into something now."
+		
+/obj/item/weapon/reagent_containers/iv_bag/afterattack(obj/target, mob/user, proximity)
+	// Reimplementation of parts of reagent_containers/glass functionality. Cut IV bags 
+	// purposefully lack a lot of the usual beaker functionality, but notably allow pouring out
+	
+	if(target.is_open_container() && target.reagents)
+		if(!src.reagents.total_volume)
+			user << "\red [src] is empty!"
+			return
+		
+		if(target.reagents.total_volume >= target.reagents.maximum_volume)
+			user << "\red [target] is full."
+			return
 			
+		var/to_pour = src.reagents.total_volume
+		var/transferred = src.reagents.trans_to(target, to_pour)
+		if(to_pour == transferred)
+			user << "\blue You pour \the [src] out into \the [target]."
+		else
+			user << "\blue You pour some of \the [src] into \the [target]."
+		
+		return
+	
 /obj/item/weapon/reagent_containers/iv_bag/on_reagent_change()
 	update_icon()
 
