@@ -13,7 +13,7 @@
 	..(user)
 	
 	if(reagents && reagents.total_volume > 0)
-		user << "It contains [src.reagents.total_volume] of liquid."
+		user << "It contains [src.reagents.total_volume] units of liquid."
 	else
 		user << "It is empty."
 		
