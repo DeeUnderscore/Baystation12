@@ -232,10 +232,6 @@
 	if((ismob(this_loc) && this_loc != src.patient) || (this_loc.type in src.valid_holders))
 		return 1
 	
-	// We check recursively, so IV kits in backpacks and such should still work. 
-	return in_valid_location(this_loc.loc)
-	
-	
 /**
  *  Add attack log entries for this IV kit
  *
