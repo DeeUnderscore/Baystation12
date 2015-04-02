@@ -45,6 +45,18 @@
 		src.cut = 1
 		user << "You cut the IV bag open. You could probably pour it into something now."
 		
+	// label
+	if(istype(W, /obj/item/weapon/pen) || istype(W, /obj/item/device/flashlight/pen))
+		// Beakers can actually be labeled with penlights. Going for consistency here.
+		var/new_label = sanitize(copytext(input(user, "Enter a label for [src.name]","Label"), 1, MAX_NAME_LEN))
+		if(length(new_label) > MAX_NAME_LEN)
+			user << "\red The label can be at most [MAX_NAME_LEN] characters long."
+		else if(length(new_label) == 0)
+			return
+		else
+			user << "\blue You label the bag \"[new_label]\"."
+			src.name = "[new_label] bag"
+		
 /obj/item/weapon/reagent_containers/iv_bag/afterattack(obj/target, mob/user, proximity)
 	// Reimplementation of parts of reagent_containers/glass functionality. Cut IV bags 
 	// purposefully lack a lot of the usual beaker functionality, but notably allow pouring out
