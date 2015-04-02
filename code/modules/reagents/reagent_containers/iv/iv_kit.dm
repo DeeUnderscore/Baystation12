@@ -11,7 +11,7 @@
 	w_class = 2
 		
 	var/drip_amount = REAGENTS_METABOLISM * 2 // How much to transfer with each drip by default
-	var/max_drip_amount = REAGENTS_METABOLISM * 8  // Maximum possible drip amount a user can set. Minimum is 0.
+	var/max_drip_amount = REAGENTS_METABOLISM * 20  // Maximum possible drip amount a user can set. Minimum is 0.
 	var/obj/item/weapon/reagent_containers/iv_bag/bag = null  // The bag we're using, null if none attached
 	var/list/valid_holders = list(/obj/machinery/iv_stand, /obj/item/weapon/gripper/iv)  // List of places other than hands where the kit can be put and still work
 	var/mob/living/carbon/human/patient = null  // Person currently hooked up
