@@ -1,5 +1,8 @@
 #define IV_KIT_HOOKIN_TIME 40  // time it takes to insert an IV catheter 
 
+#define IV_MODE_DRIP 0
+#define IV_MODE_DONATE 1
+
 /obj/item/device/iv_kit
 	name = "\improper IV kit"
 	icon = 'icons/obj/iv_kit.dmi'
@@ -12,6 +15,7 @@
 	var/obj/item/weapon/reagent_containers/iv_bag/bag = null  // The bag we're using, null if none attached
 	var/list/valid_holders = list(/obj/machinery/iv_stand, /obj/item/weapon/gripper/iv)  // List of places other than hands where the kit can be put and still work
 	var/mob/living/carbon/human/patient = null  // Person currently hooked up
+	var/mode = IV_MODE_DRIP  // either take blood (DONATE) or give reagents (DRIP)
 	var/skipped_ticks = 0
 	
 	
@@ -25,10 +29,16 @@
 		user << "\blue No bag is attached."
 	else
 		var/bag_text = "\blue \The [src.bag.name] is attached. "
-		if(src.bag.reagents && src.bag.reagents.total_volume > 0)
-			bag_text += "It has [src.bag.reagents.total_volume] units of liquid left. The drip amount is set to [src.drip_amount] units."
+		if(mode == 0)
+			if(src.bag.reagents && src.bag.reagents.total_volume > 0)
+				bag_text += "It has [src.bag.reagents.total_volume] units of liquid left. The drip amount is set to [src.drip_amount] units."
+			else
+				bag_text += "It is empty."
 		else
-			bag_text += "It is empty."
+			if(src.bag.reagents && src.bag.reagents.total_volume < src.bag.reagents.maximum_volume)
+				bag_text += "It is set to receive blood. There are [src.bag.reagents.total_volume] units in it."
+			else 
+				bag_text += "It is set to receive blood and is full." 
 		
 		user << bag_text
 			
@@ -194,24 +204,46 @@
 		src.update_icon()
 		processing_objects.Remove(src)
 		return
-	
-	if(src.drip_amount == 0)
-		return
 		
-	// We skip every other tick to prevent homeopathy. If we dripped every tick, we'd 
-	// have the ability to drip a very low amount of reagent every tick and still
-	// get the full effect. With skipped ticks, this is still possible, but at least
-	// we have to drip at least enough reagent to cover one-and-a-fraction ticks
-	if(skipped_ticks < 1)
-		skipped_ticks += 1
-		return 
-	else
-		skipped_ticks = 0
+	if(mode == IV_MODE_DRIP)
+		if(src.drip_amount == 0)
+			return
+	
+		// We skip every other tick to prevent homeopathy. If we dripped every tick, we'd 
+		// have the ability to drip a very low amount of reagent every tick and still
+		// get the full effect. With skipped ticks, this is still possible, but at least
+		// we have to drip at least enough reagent to cover one-and-a-fraction ticks
+		if(skipped_ticks < 1)
+			skipped_ticks += 1
+			return 
+		else
+			skipped_ticks = 0
 
-	// administering drugs
-	if(src.bag && src.in_valid_location())
-		src.bag.reagents.trans_to(src.patient, src.drip_amount)
-	update_icon()
+		// administering drugs
+		if(src.bag && src.in_valid_location())
+			src.bag.reagents.trans_to(src.patient, src.drip_amount)
+			update_icon()
+	else
+		// taking blood
+		
+		// checks from iv_drip implementation of this functionality
+		if(!istype(patient) || !patient.dna || (NOCLONE in patient.mutations) ||\
+		  (patient.species && patient.species.flags & NO_BLOOD))
+			return
+		
+		if(src.bag && src.in_valid_location())
+			// note that take_blood does not check for fullness of the container passed
+			var/amount = min(bag.reagents.maximum_volume - bag.reagents.total_volume, 4) 
+			
+			var/datum/reagent/blood = patient.take_blood(bag,amount)
+
+			if (blood)
+				bag.reagents.reagent_list |= blood
+				bag.reagents.update_total()
+				bag.on_reagent_change()
+				bag.reagents.handle_reactions()
+
+			update_icon()	
 	
 /obj/item/device/iv_kit/verb/set_drip_amount()
 	set name = "Set drip amount"
@@ -221,6 +253,18 @@
 	var/new_amount = input("Amount per drip:","[src.name] drip setting", src.drip_amount) as num
 	src.drip_amount = Clamp(new_amount, 0, src.max_drip_amount)
 
+/obj/item/device/iv_kit/verb/set_mode()
+	set name = "Set IV mode"
+	set category = "Object"
+	set src in range(0)
+	
+	mode = (mode == 0) ? 1 : 0
+	
+	if(mode == IV_MODE_DRIP)
+		usr << "You set the kit to function as an IV drip."
+	else
+		usr << "You set the kit to receive donated blood."
+	
 /**
  *  Return a true value if the IV kit is in a configuration ready to administer medication
  *
@@ -257,3 +301,6 @@
 	src.patient.attack_log += text("\[[time_stamp()]\] <font color='orange'>Was attached to [src.name] by [attacker.name] ([attacker.ckey]). Reagents: [contained]</font>")
 	attacker.attack_log += text("\[[time_stamp()]\] <font color='red'>Attached [src.name] to [src.patient.name] ([src.patient.key]). Reagents: [contained]</font>")
 	msg_admin_attack("[attacker.name] ([attacker.ckey]) attached [src.name] to [src.patient.name] ([src.patient.key]) Reagents: [contained] (INTENT: [uppertext(attacker.a_intent)]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[attacker.x];Y=[attacker.y];Z=[attacker.z]'>JMP</a>)")
+
+#undef IV_MODE_DRIP
+#undef IV_MODE_DONATE
