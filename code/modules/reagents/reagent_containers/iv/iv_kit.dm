@@ -22,31 +22,38 @@
 /obj/item/device/iv_kit/examine(mob/user)
 	..()
 	
-	if (!(user in view(2)) && user!=src.loc) return
+	if (user in view(2) || user == src.loc)
+		user << get_status_string()
+		
+/**
+ *  Return a multi-line string detailing current state of the kit
+ */ 
+/obj/item/device/iv_kit/proc/get_status_string()
+	var/status_text as text
 	
 	// bag line
 	if(!src.bag)
-		user << "\blue No bag is attached."
+		status_text += "\blue No bag is attached.\n"
 	else
-		var/bag_text = "\blue \The [src.bag.name] is attached. "
+		status_text += "\blue \The [src.bag.name] is attached. "
 		if(mode == 0)
 			if(src.bag.reagents && src.bag.reagents.total_volume > 0)
-				bag_text += "It has [src.bag.reagents.total_volume] units of liquid left. The drip amount is set to [src.drip_amount] units."
+				status_text += "It has [src.bag.reagents.total_volume] units of liquid left. The drip amount is set to [src.drip_amount] units.\n"
 			else
-				bag_text += "It is empty."
+				status_text += "It is empty.\n"
 		else
 			if(src.bag.reagents && src.bag.reagents.total_volume < src.bag.reagents.maximum_volume)
-				bag_text += "It is set to receive blood. There are [src.bag.reagents.total_volume] units in it."
+				status_text += "It is set to receive blood. There are [src.bag.reagents.total_volume] units in it.\n"
 			else 
-				bag_text += "It is set to receive blood and is full." 
-		
-		user << bag_text
+				status_text += "It is set to receive blood and is full.\n" 
 			
 	// patient line
 	if(!src.patient)
-		user << "\blue No one is attached."
+		status_text += "\blue No one is attached."
 	else
-		user << "\blue [src.patient.name] is attached."
+		status_text += "\blue [src.patient.name] is attached."
+
+	return status_text
 		
 /obj/item/device/iv_kit/update_icon()
 	overlays.Cut()

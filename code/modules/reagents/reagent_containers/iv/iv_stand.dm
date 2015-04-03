@@ -87,23 +87,7 @@
 
 /obj/machinery/iv_stand/examine(mob/user)
 	..(user)
-	if (!(user in view(2)) && user!=src.loc) return
 	
-	if(src.hooked_kit)
-		user << "\blue \The [src.hooked_kit.name] is hanging from it."
-		
-		// bag line
-		if(src.hooked_kit.bag)
-			user << "\blue Attached is \the [src.hooked_kit.bag.name]."
-			if(src.hooked_kit.bag.reagents && src.hooked_kit.bag.reagents.total_volume > 0)
-				user << "\blue There are [src.hooked_kit.bag.reagents.total_volume] units of liquid left. The drip amount is [src.hooked_kit.drip_amount]."
-			else
-				user << "\blue It is empty."
-		else
-			user << "\blue No bag is attached."
-		
-		// patient line
-		if(src.hooked_kit.patient)
-			user << "\blue [src.hooked_kit.patient.name] is attached."
-		else
-			user << "\blue No one is attached."
+	if(src.hooked_kit && user in view(2))
+		user << "\blue \The [src.hooked_kit] is hanging from it."
+		user << src.hooked_kit.get_status_string()
