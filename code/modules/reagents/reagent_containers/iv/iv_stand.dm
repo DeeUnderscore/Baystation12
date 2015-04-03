@@ -2,7 +2,7 @@
 	name = "\improper IV stand"
 	icon = 'icons/obj/iv_stand.dmi'
 	icon_state = "empty"
-	desc = "A stand on which an IV kit can be hanged."
+	desc = "A stand on which an IV kit can be hung."
 	anchored = 0
 	density = 1
 	
