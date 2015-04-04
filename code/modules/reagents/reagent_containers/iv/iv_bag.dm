@@ -1,4 +1,3 @@
-// TODO: Proper icons
 /obj/item/weapon/reagent_containers/iv_bag
 	name = "\improper IV bag"
 	icon = 'icons/obj/bloodpack.dmi'
@@ -130,3 +129,17 @@
 
 /obj/item/weapon/reagent_containers/iv_bag/blood/OMinus
 	blood_type = "O-"
+	
+/obj/item/weapon/storage/box/bloodpacks
+	name = "blood packs bags"
+	desc = "This box contains blood packs."
+	icon_state = "sterile"
+	New()
+		..()
+		new /obj/item/weapon/reagent_containers/iv_bag/blood(src)
+		new /obj/item/weapon/reagent_containers/iv_bag/blood(src)
+		new /obj/item/weapon/reagent_containers/iv_bag/blood(src)
+		new /obj/item/weapon/reagent_containers/iv_bag/blood(src)
+		new /obj/item/weapon/reagent_containers/iv_bag/blood(src)
+		new /obj/item/weapon/reagent_containers/iv_bag/blood(src)
+		new /obj/item/weapon/reagent_containers/iv_bag/blood(src)

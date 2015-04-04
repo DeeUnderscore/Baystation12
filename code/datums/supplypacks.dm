@@ -419,7 +419,9 @@ var/list/all_supply_groups = list("Operations","Security","Hospitality","Enginee
 	name = "BloodPack crate"
 	contains = list(/obj/item/weapon/storage/box/bloodpacks,
                     /obj/item/weapon/storage/box/bloodpacks,
-                    /obj/item/weapon/storage/box/bloodpacks)
+                    /obj/item/weapon/storage/box/bloodpacks,
+					/obj/item/device/iv_kit,
+					/obj/item/device/iv_kit)
 	cost = 10
 	containertype = /obj/structure/closet/crate/medical
 	containername = "\improper BloodPack crate"
