@@ -147,7 +147,7 @@
 	
 	processing_objects.Add(src)
 	if(is_ready())
-		add_attack_log(doctor)
+		admin_iv_log(doctor, src.patient, src, src.bag.reagents.get_reagents())
 
 /**
  *  Detach current patient from the IV
@@ -177,7 +177,7 @@
 		user << "\blue You attach \the [src.bag] to \the [src.name]."
 		update_icon()
 		if(is_ready())
-			add_attack_log(user)
+			admin_iv_log(user, src.patient, src, src.bag.reagents.get_reagents())
 			
 	else
 		return ..()
@@ -290,22 +290,6 @@
 		
 	if((ismob(this_loc) && this_loc != src.patient) || (this_loc.type in src.valid_holders))
 		return 1
-	
-/**
- *  Add attack log entries for this IV kit
- *
- *  attacker should be the person administering the IV. The "victim" is the mob
- *  connected to the IV kit. This proc will log the reagents in the bag.
- */
-/obj/item/device/iv_kit/proc/add_attack_log(mob/attacker)
-	var/list/contained_list = list()
-	for(var/datum/reagent/R in src.bag.reagents.reagent_list)
-		contained_list += R.name
-	var/contained = english_list(contained_list)
-	
-	src.patient.attack_log += text("\[[time_stamp()]\] <font color='orange'>Was attached to [src.name] by [attacker.name] ([attacker.ckey]). Reagents: [contained]</font>")
-	attacker.attack_log += text("\[[time_stamp()]\] <font color='red'>Attached [src.name] to [src.patient.name] ([src.patient.key]). Reagents: [contained]</font>")
-	msg_admin_attack("[attacker.name] ([attacker.ckey]) attached [src.name] to [src.patient.name] ([src.patient.key]) Reagents: [contained] (INTENT: [uppertext(attacker.a_intent)]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[attacker.x];Y=[attacker.y];Z=[attacker.z]'>JMP</a>)")
-
+		
 #undef IV_MODE_DRIP
 #undef IV_MODE_DONATE

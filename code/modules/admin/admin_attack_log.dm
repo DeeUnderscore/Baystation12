@@ -46,3 +46,9 @@ proc/admin_inject_log(mob/attacker, mob/victim, obj/item/weapon, reagents, amoun
 	                 "used \the [weapon] to [violent]inject - [reagents] - [amount_transferred]u transferred",
 	                 "was [violent]injected with \the [weapon] - [reagents] - [amount_transferred]u transferred",
 	                 "used \the [weapon] to [violent]inject [reagents] ([amount_transferred]u transferred) into")
+					 
+proc/admin_iv_log(mob/attacker, mob/victim, obj/item/weapon, reagents)
+	admin_attack_log(attacker, victim,
+	                 "used \the [weapon] to start an IV drip - [reagents]",
+	                 "had an IV started with \the [weapon] - [reagents]",
+	                 "used \the [weapon] to start an IV drip with [reagents] into")
