@@ -73,13 +73,13 @@
 	// hooking new kit
 	if (istype(W, /obj/item/device/iv_kit/))
 		if(!isnull(src.hooked_kit))
-			user << "\The [src.hooked_kit.name] is already loaded!"
+			user << "<span class='notice'>\The [src.hooked_kit.name] is already loaded!</span>"
 			return
 
 		user.drop_item()
 		src.hooked_kit = W
 		src.hooked_kit.loc = src
-		user.visible_message("[user.name] hangs \the [src.hooked_kit] on the \the [src.name].")
+		user.visible_message("<span class='notice'>[user.name] hangs \the [src.hooked_kit] on the \the [src.name].</span>")
 		src.update_icon()
 		
 	else
@@ -89,5 +89,5 @@
 	..(user)
 	
 	if(src.hooked_kit && user in view(2))
-		user << "\blue \The [src.hooked_kit] is hanging from it."
+		user << "<span class='notice'>\The [src.hooked_kit] is hanging from it.</span>"
 		user << src.hooked_kit.get_status_string()

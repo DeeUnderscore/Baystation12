@@ -33,25 +33,25 @@
 	
 	// bag line
 	if(!src.bag)
-		status_text += "\blue No bag is attached.\n"
+		status_text += "<span class='notice'>No bag is attached.</span>\n"
 	else
-		status_text += "\blue \The [src.bag.name] is attached. "
+		status_text += "<span class='notice'>\The [src.bag.name] is attached. "
 		if(mode == 0)
 			if(src.bag.reagents && src.bag.reagents.total_volume > 0)
-				status_text += "It has [src.bag.reagents.total_volume] units of liquid left. The drip amount is set to [src.drip_amount] units.\n"
+				status_text += "It has [src.bag.reagents.total_volume] units of liquid left. The drip amount is set to [src.drip_amount] units.</span>\n"
 			else
-				status_text += "It is empty.\n"
+				status_text += "It is empty.</span>\n"
 		else
 			if(src.bag.reagents && src.bag.reagents.total_volume < src.bag.reagents.maximum_volume)
-				status_text += "It is set to receive blood. There are [src.bag.reagents.total_volume] units in it.\n"
+				status_text += "It is set to receive blood. There are [src.bag.reagents.total_volume] units in it.</span>\n"
 			else 
-				status_text += "It is set to receive blood and is full.\n" 
+				status_text += "It is set to receive blood and is full.</span>\n" 
 			
 	// patient line
 	if(!src.patient)
-		status_text += "\blue No one is attached."
+		status_text += "<span class='notice'>No one is attached.</span>"
 	else
-		status_text += "\blue [src.patient.name] is attached."
+		status_text += "<span class='notice'>[src.patient.name] is attached.</span>"
 
 	return status_text
 		
@@ -98,12 +98,12 @@
 	if(!src.bag && istype(target, /obj/item/weapon/reagent_containers/iv_bag))
 		var/obj/item/weapon/reagent_containers/iv_bag/B = target
 		if(B.cut)
-			user << "\red \The [B] is cut open. This is not going to work."
+			user << "<span class='warning'>\The [B] is cut open. This is not going to work.</span>"
 			return
 
 		user.u_equip(target)
 		
-		user << "\blue You attach \the [src] to \the [target.name]."
+		user << "<span class='notice'>You attach \the [src] to \the [target.name].</span>"
 		
 		src.bag = target
 		src.bag.loc = src
@@ -130,16 +130,16 @@
 /obj/item/device/iv_kit/proc/attach_patient(mob/doctor, mob/living/carbon/human/new_patient)
 	// Suit check. Similar to can_inject(), but simpler: we never check for head
 	if(new_patient.wear_suit && new_patient.wear_suit.flags & THICKMATERIAL)
-		doctor << "\red You cannot find a way to run an IV line through [new_patient.name]'s suit."
+		doctor << "<span class='warning'>You cannot find a way to run an IV line through [new_patient.name]'s suit.</span>"
 		return
 	
 	// The visible messages don't say where the catheter is inserted. This is on purpose, as the IV kit (like syringes) does not check
 	// for mechanical limbs. We could check for mechanical limbs and then pick a suitable place for the catheter, but that would add a 
 	// bunch of overhead. 
-	doctor.visible_message("\red [doctor.name] begins inserting an IV line into [new_patient.name].", "\red You begin inserting the IV line into [new_patient.name].")
+	doctor.visible_message("<span class='warning'>[doctor.name] begins inserting an IV line into [new_patient.name].</span>", "<span class='warning'>You begin inserting the IV line into [new_patient.name].</span>")
 	
 	if(!do_mob(doctor, new_patient, IV_KIT_HOOKIN_TIME)) return
-	doctor.visible_message("\red [doctor.name] inserts an IV line into [new_patient.name].", "\red You finish inserting the IV line into [new_patient.name].")
+	doctor.visible_message("<span class='warning'>[doctor.name] inserts an IV line into [new_patient.name].</span>", "<span class='warning'>You finish inserting the IV line into [new_patient.name].</span>")
 	
 	patient = new_patient
 	patient.iv_line = src
@@ -155,7 +155,7 @@
  *  This proc does not check range.
  */
 /obj/item/device/iv_kit/proc/detach_patient()
-	patient.visible_message("\red [patient.name] is disconnected from the IV line.")
+	patient.visible_message("<span class='warning'>[patient.name] is disconnected from the IV line.</span>")
 	patient.iv_line = null
 	patient = null
 	processing_objects.Remove(src)
@@ -167,14 +167,14 @@
 	if(!src.bag && istype(W, /obj/item/weapon/reagent_containers/iv_bag))
 		var/obj/item/weapon/reagent_containers/iv_bag/B = W
 		if(B.cut)
-			user << "\red \The [B] is cut open. This is not going to work."
+			user << "<span class='warning'>\The [B] is cut open. This is not going to work.</span>"
 			return
 		
 		user.drop_item()
 		src.bag = B
 		src.bag.loc = src
 		
-		user << "\blue You attach \the [src.bag] to \the [src.name]."
+		user << "<span class='notice'>You attach \the [src.bag] to \the [src.name].</span>"
 		update_icon()
 		if(is_ready())
 			admin_iv_log(user, src.patient, src, src.bag.reagents.get_reagents())
@@ -204,7 +204,7 @@
 	
 	// ripping out
 	if(get_dist(src, src.patient) > 1 && isturf(src.patient.loc))
-		src.patient.visible_message("\red The IV line is yanked out of [src.patient.name].")
+		src.patient.visible_message("<span class='warning'>The IV line is yanked out of [src.patient.name].</span>")
 		src.patient.iv_line = null
 		src.patient = null
 		
@@ -266,9 +266,9 @@
 	mode = (mode == 0) ? 1 : 0
 	
 	if(mode == IV_MODE_DRIP)
-		usr << "You set the kit to function as an IV drip."
+		usr << "<span class='notice'>You set the kit to function as an IV drip.</span>"
 	else
-		usr << "You set the kit to receive donated blood."
+		usr << "<span class='notice'>You set the kit to receive donated blood.</span>"
 	
 /**
  *  Return a true value if the IV kit is in a configuration ready to administer medication
