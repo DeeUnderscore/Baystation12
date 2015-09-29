@@ -226,7 +226,7 @@
 
 		// administering drugs
 		if(src.bag && src.in_valid_location())
-			src.bag.reagents.trans_to(src.patient, src.drip_amount)
+			src.bag.reagents.trans_to_mob(src.patient, src.drip_amount, CHEM_BLOOD)
 			update_icon()
 	else
 		// taking blood
