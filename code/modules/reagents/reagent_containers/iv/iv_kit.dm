@@ -10,8 +10,8 @@
 	desc = "A kit for starting an IV line."
 	w_class = 2
 		
-	var/drip_amount = REAGENTS_METABOLISM * 2 // How much to transfer with each drip by default
-	var/max_drip_amount = REAGENTS_METABOLISM * 20  // Maximum possible drip amount a user can set. Minimum is 0.
+	var/drip_amount = REM * 2 // How much to transfer with each drip by default
+	var/max_drip_amount = REM * 20  // Maximum possible drip amount a user can set. Minimum is 0.
 	var/obj/item/weapon/reagent_containers/iv_bag/bag = null  // The bag we're using, null if none attached
 	var/list/valid_holders = list(/obj/machinery/iv_stand, /obj/item/weapon/gripper/iv)  // List of places other than hands where the kit can be put and still work
 	var/mob/living/carbon/human/patient = null  // Person currently hooked up
@@ -79,7 +79,7 @@
 			if(70 to 94) filling.icon_state = "over-4"
 			if(95 to INFINITY) filling.icon_state = "over-full"
 
-		filling.color = mix_color_from_reagents(src.bag.reagents.reagent_list)
+		filling.color = src.bag.reagents.get_color()
 		filling.transform = M
 		overlays += filling
 		
@@ -216,10 +216,8 @@
 		if(src.drip_amount == 0)
 			return
 	
-		// We skip every other tick to prevent homeopathy. If we dripped every tick, we'd 
-		// have the ability to drip a very low amount of reagent every tick and still
-		// get the full effect. With skipped ticks, this is still possible, but at least
-		// we have to drip at least enough reagent to cover one-and-a-fraction ticks
+		// We skip every other tick to prevent homeopathy in some cases, such as
+		// checks for presence of any amount of reagent in system
 		if(skipped_ticks < 1)
 			skipped_ticks += 1
 			return 

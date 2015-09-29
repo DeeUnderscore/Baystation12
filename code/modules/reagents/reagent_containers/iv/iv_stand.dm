@@ -35,7 +35,7 @@
 				if(60 to 89) filling.icon_state = "fill-3"
 				if(90 to INFINITY) filling.icon_state = "fill-full"
 				
-			filling.color = mix_color_from_reagents(src.hooked_kit.bag.reagents.reagent_list)
+			filling.color = src.hooked_kit.bag.reagents.get_color()
 			overlays += filling
 	else
 		icon_state = "empty"

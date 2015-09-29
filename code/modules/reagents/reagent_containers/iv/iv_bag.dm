@@ -35,7 +35,7 @@
 			if(70 to 94) filling.icon_state = "over-4"
 			if(95 to INFINITY) filling.icon_state = "over-full"
 
-		filling.color = mix_color_from_reagents(reagents.reagent_list)
+		filling.color = reagents.get_color()
 		overlays += filling
 		
 /obj/item/weapon/reagent_containers/iv_bag/attackby(obj/item/weapon/W, mob/user)

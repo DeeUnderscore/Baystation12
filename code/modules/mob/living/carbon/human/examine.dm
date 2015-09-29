@@ -122,7 +122,7 @@
 
 	// IV line
 	if(iv_line)
-		msg += "<span class='warning'>[t_He] [t_is] \icon[iv_line] attached to [iv_line]!</span>\n"
+		msg += "<span class='warning'>[T.He] [T.is] \icon[iv_line] attached to [iv_line]!</span>\n"
 
 	//belt
 	if(belt)
