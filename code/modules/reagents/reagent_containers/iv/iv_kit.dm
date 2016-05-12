@@ -35,7 +35,7 @@
 	if(!src.bag)
 		status_text += "<span class='notice'>No bag is attached.</span>\n"
 	else
-		status_text += "<span class='notice'>\The [src.bag.name] is attached. "
+		status_text += "<span class='notice'>\The [src.bag] is attached. "
 		if(mode == 0)
 			if(src.bag.reagents && src.bag.reagents.total_volume > 0)
 				status_text += "It has [src.bag.reagents.total_volume] units of liquid left. The drip amount is set to [src.drip_amount] units.</span>\n"
@@ -51,7 +51,7 @@
 	if(!src.patient)
 		status_text += "<span class='notice'>No one is attached.</span>"
 	else
-		status_text += "<span class='notice'>[src.patient.name] is attached.</span>"
+		status_text += "<span class='notice'>\The [src.patient] is attached.</span>"
 
 	return status_text
 		
@@ -60,7 +60,7 @@
 	icon_state = text("[]-[]", bag ? "bag" : "nobag", patient ? "hooked" : "unhooked")
 	
 	if(bag)
-		// TODO: This is pretty hacky. Figure out a better way to do it.
+		// This is pretty hacky, and prettier sprites would do better
 		
 		var/matrix/M = matrix()
 		M.Translate(-1, 6)
@@ -84,8 +84,6 @@
 		overlays += filling
 		
 	if(loc.type in valid_holders)
-		// We assume that the holder is an obj and implements update_icon(). The
-		// compiler won't warn us here.
 		var/obj/O = loc
 		O.update_icon()
 
@@ -130,16 +128,17 @@
 /obj/item/device/iv_kit/proc/attach_patient(mob/doctor, mob/living/carbon/human/new_patient)
 	// Suit check. Similar to can_inject(), but simpler: we never check for head
 	if(new_patient.wear_suit && new_patient.wear_suit.flags & THICKMATERIAL)
-		doctor << "<span class='warning'>You cannot find a way to run an IV line through [new_patient.name]'s suit.</span>"
+		doctor << "<span class='warning'>You cannot find a way to run an IV line through \the [new_patient]'s suit.</span>"
 		return
 	
 	// The visible messages don't say where the catheter is inserted. This is on purpose, as the IV kit (like syringes) does not check
-	// for mechanical limbs. We could check for mechanical limbs and then pick a suitable place for the catheter, but that would add a 
-	// bunch of overhead. 
-	doctor.visible_message("<span class='warning'>[doctor.name] begins inserting an IV line into [new_patient.name].</span>", "<span class='warning'>You begin inserting the IV line into [new_patient.name].</span>")
+	// for mechanical limbs.
+	
+	
+	doctor.visible_message("<span class='warning'>\The [doctor] begins inserting an IV line into \the [new_patient].</span>", "<span class='warning'>You begin inserting the IV line into \the [new_patient].</span>")
 	
 	if(!do_mob(doctor, new_patient, IV_KIT_HOOKIN_TIME)) return
-	doctor.visible_message("<span class='warning'>[doctor.name] inserts an IV line into [new_patient.name].</span>", "<span class='warning'>You finish inserting the IV line into [new_patient.name].</span>")
+	doctor.visible_message("<span class='warning'>\The [doctor] inserts an IV line into \the [new_patient].</span>", "<span class='warning'>You finish inserting the IV line into \the [new_patient].</span>")
 	
 	patient = new_patient
 	patient.iv_line = src
@@ -155,7 +154,7 @@
  *  This proc does not check range.
  */
 /obj/item/device/iv_kit/proc/detach_patient()
-	patient.visible_message("<span class='warning'>[patient.name] is disconnected from the IV line.</span>")
+	patient.visible_message("<span class='warning'>\The [patient] is disconnected from the IV line.</span>")
 	patient.iv_line = null
 	patient = null
 	processing_objects.Remove(src)
@@ -174,7 +173,7 @@
 		src.bag = B
 		src.bag.loc = src
 		
-		user << "<span class='notice'>You attach \the [src.bag] to \the [src.name].</span>"
+		user << "<span class='notice'>You attach \the [src.bag] to \the [src].</span>"
 		update_icon()
 		if(is_ready())
 			admin_iv_log(user, src.patient, src, src.bag.reagents.get_reagents())
@@ -204,7 +203,7 @@
 	
 	// ripping out
 	if(get_dist(src, src.patient) > 1 && isturf(src.patient.loc))
-		src.patient.visible_message("<span class='warning'>The IV line is yanked out of [src.patient.name].</span>")
+		src.patient.visible_message("<span class='warning'>The IV line is yanked out of \the [src.patient].</span>")
 		src.patient.iv_line = null
 		src.patient = null
 		
@@ -255,7 +254,7 @@
 	set category = "Object"
 	set src in range(0)
 	
-	var/new_amount = input("Amount per drip:","[src.name] drip setting", src.drip_amount) as num
+	var/new_amount = input("Amount per drip:","[src] drip setting", src.drip_amount) as num
 	src.drip_amount = Clamp(new_amount, 0, src.max_drip_amount)
 
 /obj/item/device/iv_kit/verb/set_mode()

@@ -47,13 +47,13 @@
 	// label
 	if(istype(W, /obj/item/weapon/pen) || istype(W, /obj/item/device/flashlight/pen))
 		// Beakers can actually be labeled with penlights. Going for consistency here.
-		var/new_label = sanitize(copytext(input(user, "Enter a label for [src.name]","Label"), 1, MAX_NAME_LEN))
+		var/new_label = sanitize(copytext(input(user, "Enter a label for [src]","Label"), 1, MAX_NAME_LEN))
 		if(length(new_label) > MAX_NAME_LEN)
-			user << "\red The label can be at most [MAX_NAME_LEN] characters long."
+			user << "<span class='warning'>The label can be at most [MAX_NAME_LEN] characters long.</span>"
 		else if(length(new_label) == 0)
 			return
 		else
-			user << "\blue You label the bag \"[new_label]\"."
+			user << "<span class='notice'>You label the bag \"[new_label]\".</span>"
 			src.name = "[new_label] bag"
 		
 /obj/item/weapon/reagent_containers/iv_bag/afterattack(obj/target, mob/user, proximity)
@@ -62,19 +62,19 @@
 	
 	if(target.is_open_container() && target.reagents)
 		if(!src.reagents.total_volume)
-			user << "\red [src] is empty!"
+			user << "<span class='warning'>\The [src] is empty!</span>"
 			return
 		
 		if(target.reagents.total_volume >= target.reagents.maximum_volume)
-			user << "\red [target] is full."
+			user << "<span class='warning'>\The [target] is full.</span>"
 			return
 			
 		var/to_pour = src.reagents.total_volume
 		var/transferred = src.reagents.trans_to(target, to_pour)
 		if(to_pour == transferred)
-			user << "\blue You pour \the [src] out into \the [target]."
+			user << "<span class='notice'>You pour \the [src] out into \the [target].</span>"
 		else
-			user << "\blue You pour some of \the [src] into \the [target]."
+			user << "<span class='notice'>You pour some of \the [src] into \the [target].</span>"
 		
 		return
 	

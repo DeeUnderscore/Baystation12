@@ -6,7 +6,6 @@
 		
 	can_hold = list(/obj/item/device/iv_kit)
 	
-	// TODO: Setting drip amount
 		
 /obj/item/weapon/gripper/iv/proc/set_drip_amount()
 	if(wrapped)

@@ -73,13 +73,13 @@
 	// hooking new kit
 	if (istype(W, /obj/item/device/iv_kit/))
 		if(!isnull(src.hooked_kit))
-			user << "<span class='notice'>\The [src.hooked_kit.name] is already loaded!</span>"
+			user << "<span class='notice'>\The [src.hooked_kit] is already loaded!</span>"
 			return
 
 		user.drop_item()
 		src.hooked_kit = W
 		src.hooked_kit.loc = src
-		user.visible_message("<span class='notice'>[user.name] hangs \the [src.hooked_kit] on the \the [src.name].</span>")
+		user.visible_message("<span class='notice'>\The [user] hangs \the [src.hooked_kit] on the \the [src].</span>")
 		src.update_icon()
 		
 	else
