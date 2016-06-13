@@ -89,3 +89,4 @@
 	cpu.hard_drive.store_file(new/datum/computer_file/program/chatclient())
 	cpu.hard_drive.store_file(new/datum/computer_file/program/nttransfer())
 	cpu.hard_drive.store_file(new/datum/computer_file/program/newsbrowser())
+	cpu.hard_drive.store_file(new/datum/computer_file/program/bulletin_browser())

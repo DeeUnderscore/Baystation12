@@ -1,0 +1,76 @@
+<!-- Front page -->
+
+{{if data.current_screen == "index"}}
+	{{if data.wanted}}
+	<div id="wanted" style="text-align: center; line-height: 1.2">
+	<h2>Wanted!</h2>
+	<p>Attention! Be on the look-out for and report any sightings of the following person:</p>
+		{{if data.wanted.img}}
+			<img src="{{:data.wanted.img}}">
+		{{/if}}
+	<p>Name: <strong>{{:data.wanted.suspect}}</strong><br>{{:data.wanted.description}}</p>
+	<p style="font-size: 70%">Report filed by <strong>{{:data.wanted.cop}}</strong>.</p>
+	</div>
+	{{/if}}
+	<h2>Active channels</h2>
+	<ul>
+	{{for data.channels}}
+		<li class="item">{{:helper.link(value.name, 'folder-collapsed', {'channel': value.ref, 'post': 0})}}
+		{{:helper.link('', 'pencil', {'channel': value.ref, 'post': 1}, value.postable ? null : 'disabled')}}</li>
+	{{/for}}
+	</ul>
+	<h2>Options</h2>
+	<ul>
+		<li class="item">{{:helper.link('New channel', 'plus', {'newchannel': 1})}}</li>
+	</ul>
+	
+<!-- Status dialog -->
+{{else data.current_screen == "message_dialog"}}
+	<h2>{{if data.error}}Error{{else}}Notice{{/if}}</h2>
+	<div class='statusDisplay' style='overflow: auto;'>{{:data.message}}</div>
+	<div class='item'>{{:helper.link('OK', 'check', {'dismiss_message' : 1})}}</div>
+	
+<!-- Single channel display -->
+{{else data.current_screen == "channel_display"}}
+	<h2>{{:data.channel_name}}</h2>
+	<div>Channel creator: {{:data.channel_author}}</div>
+	<div id="articles" class="block prose">
+	{{for data.stories}}
+		<div class="article">
+			<p>{{:value.body}}</p>
+			{{if value.img}}
+			<p class="captioned-image">
+				<img src="{{:value.img}}">
+				{{if value.img_caption}}
+				<div class="caption">{{:value.img_caption}}</div>
+				{{/if}}
+			</p>
+			{{/if}}
+			<p class="byline">Posted by <strong>{{:value.author}}</strong> on {{:value.time_stamp}}</p>
+		</div>
+	{{empty}}
+		<p class="bad" style="text-align: center">No entries.</p>
+	{{/for}}
+	</div>
+	<div class="item">
+	{{:helper.link('Return', 'arrowreturn-1-w', {'return': true, 'post': 1})}}</div>
+
+
+<!-- Channel creation -->
+
+{{else data.current_screen == "new_channel"}}
+	<h2>Create new channel</h2>
+	<div class="item">
+			<div class="itemLabel">Channel name:</div>
+			<div class="itemContent">{{:helper.link(data.pending_channel_name || '(edit)' , 'pencil', {'set_pending': 'channel_name'})}}</div>
+	</div>
+	<div class="item">
+		<div class="itemLabel">Anyone can post:</div>
+		<div class="itemContent">{{:helper.link(data.pending_channel_public ? 'Yes' : 'No' , data.pending_channel_public ? 'unlocked' : 'locked', {'set_pending': 'channel_public'})}}</div>
+	</div>
+	<div class="item">
+		<div class="itemLabel">Creating channel as:</div>
+		<div class="itemContent">{{:data.author_name}}</div>
+	</div>
+	<div class="item">{{:helper.link('Submit' ,'check', {'submit': 1})}} {{:helper.link('Cancel' ,'cancel' , {'return': 1})}}</div>
+{{/if}}

@@ -351,6 +351,35 @@ div.notice {
     background-color: #202020;
 }
 
+.prose{
+	line-height: 1.7;
+	font-size: 110%;
+	padding: 1em;
+}
+.prose p:first-child {
+	margin-top: 0;
+}
+
+.prose p + p{
+	margin-top: 2.4em;
+}
+
+div.article + div.article {
+	margin-top: 2.8em;
+}
+
+#articles .byline{
+	font-size: 85%;
+	text-align: right;
+	font-style: italic;
+	margin-top: 0em;
+}
+
+#articles h2{
+	font-size: 190%;
+	font-style: bold;
+}
+
 .block h3 {
     padding: 0;
 }

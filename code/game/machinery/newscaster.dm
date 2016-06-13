@@ -109,6 +109,9 @@
 			continue
 		receiving_pdas += P
 
+	for(var/datum/computer_file/program/bulletin_browser/running_program in running_bulletin_clients)
+		running_program.beep_alert(annoncement)
+		
 	spawn(0)	// get_receptions sleeps further down the line, spawn of elsewhere
 		var/datum/receptions/receptions = get_receptions(null, receiving_pdas) // datums are not atoms, thus we have to assume the newscast network always has reception
 
@@ -121,7 +124,7 @@
 var/datum/feed_network/news_network = new /datum/feed_network     //The global news-network, which is coincidentally a global list.
 
 var/list/obj/machinery/newscaster/allCasters = list() //Global list that will contain reference to all newscasters in existence.
-
+var/list/datum/computer_file/program/newsbrowser/running_bulletin_clients = list() 
 
 /obj/machinery/newscaster
 	name = "newscaster"
