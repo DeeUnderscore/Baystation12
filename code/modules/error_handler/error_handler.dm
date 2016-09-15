@@ -95,7 +95,7 @@ var/total_runtimes_skipped = 0
 		desclines += "  (This error will now be silenced for [ERROR_SILENCE_TIME / 600] minutes)"
 
 	// Now to actually output the error info...
-	log_to_dd("\[[time_stamp()]] Runtime in [e.file],[e.line]: [e]")
+	log_to_dd("\[[time_stamp()]] Runtime error in [e.file],[e.line]: [e]")
 	for(var/line in desclines)
 		log_to_dd(line)
 	if(error_cache)

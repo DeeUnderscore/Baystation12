@@ -26,7 +26,7 @@ var/global/datum/ErrorViewer/ErrorCache/error_cache = null
 
 /datum/ErrorViewer/proc/browseTo(var/user, var/html)
 	if(user)
-		var/datum/browser/popup = new(user, "error_viewer", "Runtime Viewer", 700, 500)
+		var/datum/browser/popup = new(user, "error_viewer", "Runtime Error Viewer", 700, 500)
 		popup.add_head_content({"<style>
 			.runtime{
 				background-color: #171717;
@@ -123,7 +123,7 @@ var/global/datum/ErrorViewer/ErrorCache/error_cache = null
 	// (Also, make sure config is initialized, or log_debug will runtime)
 	if(config && error_source.next_message_at <= world.time)
 		var/const/viewtext = "\[view]" // Nesting these in other brackets went poorly
-		log_debug("Runtime in [e.file],[e.line]: [html_encode(e.name)] [error_entry.makeLink(viewtext)]")
+		log_debug("Runtime error in [e.file],[e.line]: [html_encode(e.name)] [error_entry.makeLink(viewtext)]")
 		error_source.next_message_at = world.time + ERROR_MSG_DELAY
 
 /datum/ErrorViewer/ErrorSource
@@ -134,7 +134,7 @@ var/global/datum/ErrorViewer/ErrorCache/error_cache = null
 	if(!istype(e))
 		name = "\[[time_stamp()]] Uncaught exceptions"
 		return
-	name = "\[[time_stamp()]] Runtime in [e.file],[e.line]: [e]"
+	name = "\[[time_stamp()]] Runtime error in [e.file],[e.line]: [e]"
 
 /datum/ErrorViewer/ErrorSource/showTo(var/user, var/datum/ErrorViewer/back_to, var/linear)
 	if(!istype(back_to))
